@@ -1,0 +1,82 @@
+Tabelle
+CREATE TABLE STUDENTI (
+    Matricola INT PRIMARY KEY,
+    NomeS VARCHAR(50),
+    CorsoLaurea VARCHAR(50),
+    AnnoN INT,
+    FOREIGN KEY (CorsoLaurea) REFERENCES CORSIDILAUREA(CorsoLaurea)
+);
+
+CREATE TABLE CORSIDILAUREA (
+    CorsoLaurea VARCHAR(50) PRIMARY KEY,
+    TipoLaurea VARCHAR(50),
+    Facoltà VARCHAR(50)
+);
+
+CREATE TABLE FREQUENTA (
+    Matricola INT,
+    CodCorso INT,
+    FOREIGN KEY (Matricola) REFERENCES STUDENTI(Matricola),
+    FOREIGN KEY (CodCorso) REFERENCES CORSI(CodCorso),
+    PRIMARY KEY (Matricola, CodCorso)
+);
+
+CREATE TABLE CORSI (
+    CodCorso INT PRIMARY KEY,
+    NomeCorso VARCHAR(50),
+    CodDocente INT,
+    FOREIGN KEY (CodDocente) REFERENCES DOCENTI(CodDocente)
+);
+
+CREATE TABLE DOCENTI (
+    CodDocente INT PRIMARY KEY,
+    NomeD VARCHAR(50),
+    Dipartimento VARCHAR(50)
+);
+
+INSERT
+
+tabella STUDENTI
+INSERT INTO STUDENTI (Matricola, NomeS, CorsoLaurea, AnnoN)
+VALUES
+    (1, 'Mario Rossi', 'SBC', 1998),
+    (2, 'Luca Bianchi', 'Informatica', 2000),
+    (3, 'Mario Rizzo', 'ABC', 1999);
+
+CORSIDILAUREA
+INSERT INTO CORSIDILAUREA (CorsoLaurea, TipoLaurea, Facoltà)
+VALUES
+    ('SBC', 'L', 'Scienze'),
+    ('Informatica', 'L', 'Scienze'),
+    ('Fisica', 'L', 'Matematica');
+
+tabella FREQUENTA
+INSERT INTO FREQUENTA (Matricola, CodCorso)
+VALUES
+    (1, 101),
+    (1, 102),
+    (2, 101);
+    
+
+tabella CORSI
+INSERT INTO CORSI (CodCorso, NomeCorso, CodDocente)
+VALUES
+    (101, 'Basi di Dati e Sistemi Informativi', 201),
+    (102, 'Informatica Generale', 202),
+    (103, 'Scienze Applicate', 203);
+
+tabella DOCENTI
+INSERT INTO DOCENTI (CodDocente, NomeD, Dipartimento)
+VALUES
+    (201, 'Felice', 'Informatica'),
+    (202, 'Leoni', 'Storia'),
+    (203, 'Leopardi', 'Matematica');
+
+Query
+1)SELECT studenti.NomeS, studenti.AnnoN FROM studenti INNER JOIN corsidilaurea ON studenti.CorsoLaurea = corsidilaurea.CorsoLaurea WHERE studenti.CorsoLaurea = 'SBC' ORDER BY studenti.NomeS;
+2)SELECT docenti.Dipartimento, docenti.NomeD FROM docenti INNER JOIN corsi ON docenti.CodDocente = corsi.CodDocente WHERE corsi.NomeCorso = 'Basi di dati e Sistemi Informativi' OR corsi.NomeCorso = 'Informatica generale';
+3)SELECT studenti.Matricola, studenti.NomeS FROM studenti INNER JOIN corsidilaurea ON studenti.CorsoLaurea = corsidilaurea.CorsoLaurea INNER JOIN frequenti ON studenti.Matricola = frequenta.Matricola INNER JOIN corsi ON frequenta.CodCorso = corsi.CodCorso INNER JOIN docenti ON corsi.CodDocente = docenti.CodDocente WHERE corsidilaurea.TipoLaurea = 'L' AND docenti.NomeD = 'Felice'
+4)SELECT corsidilaurea.tipoLaurea, AVG(studenti.AnnoN - anno_nascita) AS eta_media
+FROM Studenti
+GROUP BY tipoLaurea;
+5)SELECT frequenta.CodCorso, COUNT studenti.Matricola FROM studente WHERE 

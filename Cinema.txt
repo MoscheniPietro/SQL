@@ -1,0 +1,81 @@
+CREATE TABLE ATTORI (
+    CodAttore INT PRIMARY KEY,
+    Nome VARCHAR(50),
+    AnnoNascita INT,
+    Nazionalita VARCHAR(50)
+);
+
+CREATE TABLE RECITA (
+    CodAttore INT,
+    CodFilm INT,
+    FOREIGN KEY (CodAttore) REFERENCES ATTORI(CodAttore),
+    FOREIGN KEY (CodFilm) REFERENCES FILM(CodFilm),
+    PRIMARY KEY (CodAttore, CodFilm)
+);
+
+CREATE TABLE FILM (
+    CodFilm INT PRIMARY KEY,
+    Titolo VARCHAR(100),
+    AnnoProduzione INT,
+    Nazionalita VARCHAR(50),
+    Regista VARCHAR(50),
+    Genere VARCHAR(50)
+);
+
+CREATE TABLE PROIEZIONI (
+    CodProiezione INT PRIMARY KEY,
+    CodFilm INT,
+    CodSala INT,
+    Incasso DECIMAL(10, 2),
+    DataProiezione DATE,
+    FOREIGN KEY (CodFilm) REFERENCES FILM(CodFilm),
+    FOREIGN KEY (CodSala) REFERENCES SALE(CodSala)
+);
+
+CREATE TABLE SALE (
+    CodSala INT PRIMARY KEY,
+    Posti INT,
+    Nome VARCHAR(50),
+    Citta VARCHAR(50)
+);
+
+INSERT INTO SALE (CodSala, Posti, Nome, Citta)
+VALUES
+    (1, 100, 'Sala A', 'Pisa'),
+    (2, 150, 'Sala B', 'Pisa'),
+    (3, 80, 'Sala C', 'Napoli');
+
+
+INSERT INTO FILM (CodFilm, Titolo, AnnoProduzione, Nazionalita, Regista, Genere) VALUES (1, 'Film1', 1970, 'Italia', 'F. Fellini', 'Drammatico'), (2, 'Film2', 1980, 'Francia', 'AltroRegista', 'Fantascienza'), (3, 'Casablanca', 1942, 'USA', 'RegistaCasablanca', 'Drammatico');
+
+INSERT INTO PROIEZIONI (CodProiezione, CodFilm, CodSala, Incasso, DataProiezione)
+VALUES
+    (1, 1, 1, 1500.50, '2004-12-25'),
+    (2, 2, 2, 1200.75, '2004-12-25'),
+    (3, 3, 1, 800.00, '2004-12-25');
+
+INSERT INTO ATTORI (CodAttore, Nome, AnnoNascita, Nazionalita) VALUES (1, 'Marcello Mastroianni', 1924, 'Italia'), (2, 'Sophia Loren', 1934, 'Italia'), (3, 'Robin Williams', 1951, 'USA'), (4, 'AttoreFrancese', 1960, 'Francia');
+
+INSERT INTO RECITA (CodAttore, CodFilm)
+VALUES
+    (1, 1),
+    (2, 1),
+    (3, 2),
+    (4, 3);
+
+1)SELECT sale.Nome FROM sale WHERE sale.Citta = "Pisa"
+2)SELECT FILM.Titolo FROM FILM WHERE FILM.Regista = "F.Fellini" AND FILM.AnnoProduzione > 1960;
+3)SELECT FILM.Titolo FROM FILM WHERE FILM.Genere = "Fantascienza" AND FILM.Nazionalita = "Giapponese" OR FILM.Nazionalita = "Francese" AND FILM.AnnoProduzione > 1990;
+4)SELECT FILM.Titolo FROM FILM WHERE FILM.Genere = "Fantascienza" AND FILM.Nazionalita = "Giapponese" OR FILM.Nazionalita = "Francese" AND FILM.AnnoProduzione > 1990;
+5)SELECT FILM.Titolo FROM FILM WHERE regista=(SELECT FILM.Regista FROM FILM WHERE FILM.Titolo = "Casablanca");
+6)SELECT FILM.Titolo, FILM.Genere FROM FILM INNER JOIN PROIEZIONI ON FILM.CodFilm = PROIEZIONI.CodFilm WHERE PROIEZIONI.DataProiezione = "2004-01-01";
+7)SELECT FILM.Titolo, FILM.Genere FROM FILM INNER JOIN PROIEZIONI ON FILM.CodFilm = PROIEZIONI.CodFilm INNER JOIN sale ON PROIEZIONI.CodSala = SALE.CodSala WHERE SALE.Citta = "Napoli" AND PROIEZIONI.DataProiezione = "2004-01-01"
+8)SELECT SALE.Nome FROM SALE INNER JOIN PROIEZIONI ON SALE.CodSala = PROIEZIONI.CodSala INNER JOIN FILM ON PROIEZIONI.CodFilm = FILM.CodFilm WHERE SALE.Citta = "Napoli" AND PROIEZIONI.DataProiezione = "2004-12-25" AND FILM.Regista = "R.Williams";
+9)SELECT FILM.Titolo FROM FILM INNER JOIN RECITA ON FILM.CodFilm = RECITA.CodFilm INNER JOIN ATTORI ON RECITA.CodAttore = ATTORI.CodAttore WHERE ATTORI.Nome = "M.Mastroianni" OR ATTORI.Nome = "S.Loren";
+10)SELECT FILM.Titolo FROM FILM INNER JOIN RECITA ON FILM.CodFilm = RECITA.CodFilm INNER JOIN ATTORI ON RECITA.CodAttore = ATTORI.CodAttore WHERE ATTORI.Nome = "M.Mastroianni" AND ATTORI.Nome = "S.Loren";
+11)SELECT FILM.Titolo FROM FILM INNER JOIN RECITA ON FILM.CodFilm = RECITA.CodFilm INNER JOIN ATTORI ON RECITA.CodAttore = ATTORI.CodAttore WHERE ATTORI.Nazionalita = "Francese";
+12)SELECT FILM.Titolo, SALE.Nome FROM FILM INNER JOIN PROIEZIONI ON FILM.CodFilm INNER JOIN SALE ON PROIEZIONI.CodSala = SALE.CodSala WHERE SALE.Citta = "Pisa" AND PROIEZIONI.DataProiezione BETWEEN "2005-01-01" AND "2005-01-31";
+13)SELECT COUNT SALE FROM SALE
+WHERE SALE.Posti > 60
+14)SELECT SUM(SALE.Posti) FROM SALE
+15)SELECT COUNT(SALE.Nome), SALE.Nome, SALE.Citta FROM SALE GROUP BY SALE.Citta;
